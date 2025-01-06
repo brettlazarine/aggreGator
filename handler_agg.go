@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/brettlazarine/gator/internal/database"
+	"github.com/google/uuid"
 )
 
 func handlerAgg(s *state, cmd command) error {
@@ -50,10 +51,33 @@ func scrapeFeeds(s *state) error {
 		return err
 	}
 
-	fmt.Printf("*** Title: %s\n", feed.Channel.Title)
 	for _, item := range feed.Channel.Item {
-		fmt.Println("Title:", item.Title)
+		post, err := s.db.CreatePost(context.Background(), database.CreatePostParams{
+			ID:          uuid.New(),
+			CreatedAt:   time.Now(),
+			UpdatedAt:   time.Now(),
+			Title:       item.Title,
+			Url:         item.Link,
+			Description: item.Description,
+			PublishedAt: parseTime(item.PubDate),
+			FeedID:      nextFeed.ID,
+		})
+		if err != nil {
+			return err
+		}
+
+		fmt.Printf("*** Post %v created ***\n", post.Title)
 	}
 
 	return nil
+}
+
+func parseTime(timeStr string) time.Time {
+	layout := "Mon, 02 Jan 2006 15:04:05 MST"
+	t, err := time.Parse(layout, timeStr)
+	if err != nil {
+		fmt.Printf("Error parsing time: %v\n", err)
+		return time.Time{}
+	}
+	return t
 }

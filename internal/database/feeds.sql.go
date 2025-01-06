@@ -139,16 +139,11 @@ func (q *Queries) GetFeeds(ctx context.Context) ([]Feed, error) {
 }
 
 const getNextFeedToFetch = `-- name: GetNextFeedToFetch :one
-
 SELECT id, created_at, updated_at, name, url, user_id, last_fetched_at FROM feeds
 ORDER BY last_fetched_at NULLS FIRST
 LIMIT 1
 `
 
-// Add a GetNextFeedToFetch SQL query. It should return the next feed we should fetch posts from.
-// We want to scrape all the feeds in a continuous loop. A simple approach is to keep track of when a feed was last fetched,
-// and always fetch the oldest one first (or any that haven't ever been fetched).
-// SQL has a NULLS FIRST clause that can help with this.
 func (q *Queries) GetNextFeedToFetch(ctx context.Context) (Feed, error) {
 	row := q.db.QueryRowContext(ctx, getNextFeedToFetch)
 	var i Feed
