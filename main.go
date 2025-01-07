@@ -7,8 +7,8 @@ import (
 
 	_ "github.com/lib/pq"
 
-	"github.com/brettlazarine/aggreGator/internal/config"
-	"github.com/brettlazarine/aggreGator/internal/database"
+	"github.com/brettlazarine/gator/internal/config"
+	"github.com/brettlazarine/gator/internal/database"
 )
 
 type state struct {
