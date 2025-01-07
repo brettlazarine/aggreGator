@@ -1,4 +1,4 @@
-module github.com/brettlazarine/gator
+module github.com/brettlazarine/aggreGator
 
 go 1.23.4
 
